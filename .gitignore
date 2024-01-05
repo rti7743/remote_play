@@ -1,0 +1,14 @@
+*.sdf
+*.suo
+*.exe
+*.pdb
+qWatcher/Debug
+qWatcher/ipch
+qWatcher/Release
+qWatcher/qWatcher/Debug
+qWatcher/qWatcher/Release
+RemotePlay2/RemotePlay2/bin
+RemotePlay2/RemotePlay2/obj
+Secretbro2/Secretbro2/bin
+Secretbro2/Secretbro2/obj
+.vs/
