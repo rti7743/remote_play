@@ -1,15 +1,19 @@
 "# remote_play" 
 
-** qWatcher **
+qWatcher
+===
 特定のディレクトリを監視し、ファイルが作られたら実行する。
 urlショートカットだとchromeを起動する。
 Fキーを送って全画面表示にする。(youtubeを想定)
 自分用なのでパスは決め打ち
 
-** RemotePlay2 **
+RemotePlay2
+===
 qWatcherが監視しているディレクトリに、ショートカットまたは、小さいファイルならコピーを生成するプログラム
 
-** Secretbro2 **
+
+Secretbro2
+===
 urlをショートカットをシークレットモードchromeで開く
 ただ、urlショートカットへの関連付けはwin7では変えられるが、win11では変えられない??
 regeditでも書き換え拒否されるので、win11ではできないかも。
