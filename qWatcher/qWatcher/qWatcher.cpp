@@ -7,32 +7,6 @@
 
 using namespace std;
 
-BOOL TerminateProcessByName(LPCTSTR szProcessName, UINT uExitCode)
-{
-    HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (hSnapShot == INVALID_HANDLE_VALUE) {
-        return(FALSE);
-    }
-
-    PROCESSENTRY32 pe;
-    pe.dwSize = sizeof(PROCESSENTRY32);
-
-    BOOL bResult = Process32First(hSnapShot, &pe);
-    while (bResult) {
-        if (_tcsicmp(pe.szExeFile, szProcessName) == 0) {
-            HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, 0,
-                (DWORD)pe.th32ProcessID);
-            if (hProcess != NULL) {
-                TerminateProcess(hProcess, uExitCode);
-                CloseHandle(hProcess);
-            }
-        }
-        bResult = Process32Next(hSnapShot, &pe);
-    }
-
-    CloseHandle(hSnapShot);
-    return(TRUE);
-}
 
 void SendFKey()
 {
@@ -100,8 +74,9 @@ std::string WStringToString(const std::wstring& oWString)
 
 void Execute(const std::wstring& path)
 {
-	TerminateProcessByName(L"chrome.exe",0);
-	TerminateProcessByName(L"mpc-hc.exe",0);
+	//見た目は悪いが、taskkillの/Tオプションを入れないとchromeがクラッシュしたと判定されることがある。
+	system("taskkill /T /f /im:chrome.exe");
+	system("taskkill /T /f /im:mpc-hc.exe");
 
 	const wstring extension = get_extension(path);
 	if (extension == L"url")
@@ -111,7 +86,7 @@ void Execute(const std::wstring& path)
 		{
 			DeleteFileW(path.c_str());
 
-			std::string exec = "start chrome --incognito --disable-features=InfiniteSessionRestore "+WStringToString(url);
+			std::string exec = "start chrome --incognito "+WStringToString(url);
 			system(exec.c_str());
 			Sleep(15000);
 			SendFKey();
@@ -171,7 +146,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     nid.uCallbackMessage = WM_USER + 1;
     nid.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    wcscpy_s(nid.szTip, L"SecretBro");
+    wcscpy_s(nid.szTip, L"qWatcher");
     Shell_NotifyIconW(NIM_ADD, &nid);
 
     MSG msg;
@@ -193,6 +168,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             }
         }
     }
+	CloseHandle(hThread);
 
     return 0;
 }

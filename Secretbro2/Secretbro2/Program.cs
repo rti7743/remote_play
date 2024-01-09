@@ -14,17 +14,17 @@ namespace Secretbro2
         {
             if (args.Length <= 0)
             {
-                Process.Start("chrome.exe", "--incognito --disable-features=InfiniteSessionRestore");
+                Process.Start("chrome.exe", "--incognito --disable-session-crashed-bubble --disable-infobars");
                 return;
             }
             string filePath = string.Join(" ",args);
             string url = GetURL(filePath);
             if (url != "")
             {
-                Process.Start("chrome.exe", "--incognito --disable-features=InfiniteSessionRestore " + url);
+                Process.Start("chrome.exe", "--incognito --disable-session-crashed-bubble --disable-infobars " + url);
                 return;
             }
-            Process.Start("chrome.exe", "--incognito --disable-features=InfiniteSessionRestore \"" + filePath + "\"");
+            Process.Start("chrome.exe", "--incognito --disable-session-crashed-bubble --disable-infobars \"" + filePath + "\"");
         }
 
         static string GetURL(string filePath)
