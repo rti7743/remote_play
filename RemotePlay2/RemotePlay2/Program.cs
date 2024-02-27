@@ -175,9 +175,11 @@ namespace RemotePlay2
         {
             if (args.Length < 1)
             {
-                Console.WriteLine("Usage: " + Path.GetFileName(Environment.GetCommandLineArgs()[0]) + " <filename>");
+                Form1 f = new Form1();
+                f.ShowDialog();
                 return;
             }
+            U.SendWakeOnLanNoError("192.168.10.10");
 
             string filename = args[0];
             string extension = Path.GetExtension(filename);
@@ -195,15 +197,6 @@ namespace RemotePlay2
                 IShellLinkW link = (IShellLinkW)new ShellLink();
                 link.SetPath(filename);
                 ((IPersistFile)link).Save(shortcut, true);
-
-                //この方法では、IWshShortcut TargetPath 値が有効な範囲ではありません というエラーが出る時がある。
-                //どうやら複雑なパスへの対応ができないようだ。
-                //クソOSが死ぬ. これを設計した奴、精神状態おかしいよ。
-                //
-                //WshShell shell = new WshShell();
-                //IWshShortcut link = (IWshShortcut)shell.CreateShortcut(shortcut);
-                //link.TargetPath = filename;
-                //link.Save();
             }
         }
     }

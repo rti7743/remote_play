@@ -27,3 +27,6 @@
 #include <shellapi.h>
 #include <tlhelp32.h>
 #include <tchar.h>
+
+#include <mmdeviceapi.h>
+#include <endpointvolume.h>

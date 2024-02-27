@@ -19,12 +19,26 @@ namespace Secretbro2
             }
             string filePath = string.Join(" ",args);
             string url = GetURL(filePath);
+            if (IsSteamURL(url))
+            {
+                Process.Start("explorer.exe", url);
+                return;
+            }
             if (url != "")
             {
                 Process.Start("chrome.exe", "--incognito --disable-session-crashed-bubble --disable-infobars " + url);
                 return;
             }
             Process.Start("chrome.exe", "--incognito --disable-session-crashed-bubble --disable-infobars \"" + filePath + "\"");
+        }
+
+        static bool IsSteamURL(string url)
+        {
+            if (url.IndexOf("steam://") >= 0)
+            {
+                return true;
+            }
+            return false;
         }
 
         static string GetURL(string filePath)

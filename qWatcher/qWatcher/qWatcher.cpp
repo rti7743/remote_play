@@ -3,74 +3,10 @@
 
 #include "stdafx.h"
 #include "qWatcher.h"
-
-
+#include "U.h"
 using namespace std;
 
 
-void SendFKey()
-{
-// Fキーを送信する
-    INPUT input;
-    input.type = INPUT_KEYBOARD;
-    input.ki.wScan = MapVirtualKey('F', MAPVK_VK_TO_VSC);
-    input.ki.time = 0;
-    input.ki.dwExtraInfo = 0;
-    input.ki.wVk = 'F';
-    input.ki.dwFlags = 0;
-    SendInput(1, &input, sizeof(INPUT));
-}
-
-
-std::wstring GetUrlFromUrlFile(const std::wstring& url_file_path) 
-{
-    std::wifstream url_file(url_file_path);
-    std::wstring line;
-    while (std::getline(url_file, line)) {
-        if (line.find(L"URL=") == 0) {
-            return line.substr(4);
-        }
-    }
-    return L"";
-}
-
-
-std::wstring get_extension(const std::wstring& path)
-{
-    size_t dot_pos = path.find_last_of(L".");
-    if (dot_pos == std::string::npos)
-    {
-        return L"";
-    }
-    else
-    {
-        std::wstring extension = path.substr(dot_pos + 1);
-        return extension;
-    }
-}
-
-std::string WStringToString(const std::wstring& oWString)
-{
-    // wstring → SJIS
-    int iBufferSize = WideCharToMultiByte( CP_OEMCP, 0, oWString.c_str()
-        , -1, (char *)NULL, 0, NULL, NULL );
- 
-    // バッファの取得
-    CHAR* cpMultiByte = new CHAR[ iBufferSize ];
- 
-    // wstring → SJIS
-    WideCharToMultiByte( CP_OEMCP, 0, oWString.c_str(), -1, cpMultiByte
-        , iBufferSize, NULL, NULL );
- 
-    // stringの生成
-    std::string oRet( cpMultiByte, cpMultiByte + iBufferSize - 1 );
- 
-    // バッファの破棄
-    delete [] cpMultiByte;
- 
-    // 変換結果を返す
-    return( oRet );
-}
 
 void Execute(const std::wstring& path)
 {
@@ -89,7 +25,7 @@ void Execute(const std::wstring& path)
 			std::string exec = "start chrome --incognito "+WStringToString(url);
 			system(exec.c_str());
 			Sleep(15000);
-			SendFKey();
+			SendKey('F');
 			return ;
 		}
 	}
@@ -99,8 +35,37 @@ void Execute(const std::wstring& path)
 		Sleep(2000);
 		DeleteFileW(path.c_str());
 		Sleep(1500);
-		SendFKey();
+		SendKey('F');
 	}
+}
+
+bool SpControl(wstring file_path,wstring filename)
+{
+	if (filename == L"_VolDown.txt")
+	{
+		VolDown();
+		DeleteFileW(file_path.c_str());
+		return true;
+	}
+	if (filename == L"_VolUp.txt")
+	{
+		VolUp();
+		DeleteFileW(file_path.c_str());
+		return true;
+	}
+	if (filename == L"_RewindKey.txt")
+	{
+		SendKey('J');
+		DeleteFileW(file_path.c_str());
+		return true;
+	}
+	if (filename == L"_FastForwardKey.txt")
+	{
+		SendKey('L');
+		DeleteFileW(file_path.c_str());
+		return true;
+	}
+	return false;
 }
 
  
@@ -124,6 +89,10 @@ DWORD WINAPI watch_folder(LPVOID lpParam)
 				{
 					wstring filename = wstring(pNotify->FileName, pNotify->FileNameLength / 2);
                     wstring file_path = folder_path + L"\\" + filename;
+					if (SpControl(file_path,filename))
+					{
+						continue;
+					}
 					Execute(file_path);
                 }
             }
